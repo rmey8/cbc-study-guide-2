@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>250-602 CBC — Admin Study Guide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --red: #A32D2D; --red-light: #FCEBEB; --red-dark: #501313; --red-mid: #E24B4A;
+    --bg: #f8f7f5; --surface: #fff; --border: rgba(0,0,0,0.09);
+    --text: #1a1a1a; --text-muted: #666; --text-hint: #999;
+    --success: #3B6D11; --success-bg: #EAF3DE;
+    --danger: #A32D2D; --danger-bg: #FCEBEB;
+    --amber: #854F0B; --amber-bg: #FAEEDA;
+    --info: #185FA5; --info-bg: #E6F1FB;
+    --nav-bg: #1C3557;
+    --radius: 8px; --radius-lg: 12px;
+    --font: system-ui, -apple-system, sans-serif;
+    --mono: 'Courier New', monospace;
+  }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; }
+
+  /* HEADER */
+  .header { background: var(--red-dark); color: white; padding: 14px 24px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 200; border-bottom: 3px solid var(--red-mid); }
+  .header-badge { background: var(--red-mid); font-family: var(--mono); font-size: 11px; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+  .header h1 { font-size: 15px; font-weight: 500; }
+  .header-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 1px; }
+
+  /* TOP NAV TABS */
+  .top-nav { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; position: sticky; top: 57px; z-index: 199; }
+  .top-tab { padding: 11px 18px; border: none; background: none; font-family: var(--font); font-size: 14px; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; white-space: nowrap; }
+  .top-tab:hover { color: var(--text); }
+  .top-tab.active { color: var(--red); border-bottom-color: var(--red); font-weight: 500; }
+
+  .main { max-width: 960px; margin: 0 auto; padding: 24px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* DOMAIN CHIPS */
+  .domain-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .domain-chip { padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); font-size: 12px; cursor: pointer; transition: all 0.15s; color: var(--text-muted); white-space: nowrap; }
+  .domain-chip:hover { border-color: var(--red); color: var(--red); }
+  .domain-chip.active { background: var(--red); border-color: var(--red); color: white; }
+  .domain-card { display: none; }
+  .domain-card.active { display: block; }
+
+  /* GUIDE CARD */
+  .guide-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 16px; }
+  .guide-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .guide-icon { width: 38px; height: 38px; border-radius: var(--radius); background: var(--red-light); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .guide-card-header h2 { font-size: 16px; font-weight: 500; }
+  .guide-card-header p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* NAV PATH */
+  .nav-path { display: flex; align-items: center; gap: 6px; font-size: 12px; font-family: var(--mono); background: var(--nav-bg); color: #a8c4e0; padding: 8px 14px; border-radius: var(--radius); margin: 12px 0; flex-wrap: wrap; }
+  .nav-path .sep { color: #4a7fa8; }
+  .nav-path .current { color: #7dd3fc; font-weight: 500; }
+  .nav-path .click { color: #93c5fd; cursor: default; }
+  .nav-path .click:not(:last-child)::after { content: ""; }
+
+  /* SOP STEPS */
+  .sop { margin: 14px 0; }
+  .sop-title { font-size: 13px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .step { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .step:last-child { border-bottom: none; }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--red); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 2px; font-family: var(--mono); }
+  .step-text { font-size: 14px; line-height: 1.6; flex: 1; }
+  .step-text strong { font-weight: 500; }
+  .step-text code { font-family: var(--mono); font-size: 12px; background: var(--bg); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--border); color: var(--red); }
+
+  /* CALLOUTS */
+  .tip { background: var(--amber-bg); border: 1px solid rgba(133,79,11,0.15); border-radius: var(--radius); padding: 10px 14px; margin: 12px 0; font-size: 13px; color: var(--amber); }
+  .tip::before { content: "Exam tip  "; font-weight: 600; }
+  .info { background: var(--info-bg); border: 1px solid rgba(24,95,165,0.15); border-radius: var(--radius); padding: 10px 14px; margin: 12px 0; font-size: 13px; color: var(--info); }
+  .lab { background: var(--success-bg); border: 1px solid rgba(59,109,17,0.15); border-radius: var(--radius); padding: 10px 14px; margin: 12px 0; font-size: 13px; color: var(--success); }
+  .lab::before { content: "Lab practice  "; font-weight: 600; }
+  .warn { background: var(--red-light); border: 1px solid rgba(163,45,45,0.15); border-radius: var(--radius); padding: 10px 14px; margin: 12px 0; font-size: 13px; color: var(--red); }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin: 12px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--bg); padding: 8px 12px; text-align: left; font-weight: 500; border-bottom: 1px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  /* QUICK REF */
+  .qref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 12px 0; }
+  .qref-item { background: var(--bg); border-radius: var(--radius); padding: 12px 14px; border: 1px solid var(--border); }
+  .qref-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .qref-value { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .qref-path { font-size: 11px; font-family: var(--mono); color: var(--info); margin-top: 3px; }
+
+  h3.sub { font-size: 14px; font-weight: 500; margin: 18px 0 10px; border-left: 3px solid var(--red); padding-left: 10px; }
+
+  /* QUIZ */
+  .quiz-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .progress-bar { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--red); border-radius: 3px; transition: width 0.3s; }
+  .progress-text { font-size: 13px; color: var(--text-muted); font-family: var(--mono); white-space: nowrap; }
+  .quiz-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px; margin-bottom: 14px; }
+  .q-number { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; font-family: var(--mono); }
+  .q-tag { display: inline-block; font-size: 11px; background: var(--red-light); color: var(--red); padding: 2px 8px; border-radius: 4px; margin-bottom: 10px; }
+  .q-scenario { background: var(--bg); border-left: 3px solid var(--border); border-radius: 0 var(--radius) var(--radius) 0; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; color: var(--text-muted); font-style: italic; }
+  .q-text { font-size: 15px; font-weight: 500; margin-bottom: 16px; line-height: 1.55; }
+  .multi-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; font-style: italic; }
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .option-btn { width: 100%; text-align: left; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); background: var(--surface); font-family: var(--font); font-size: 14px; cursor: pointer; transition: border-color 0.15s, background 0.15s; display: flex; gap: 11px; align-items: flex-start; color: var(--text); }
+  .option-btn:hover:not(:disabled) { border-color: var(--red); background: var(--red-light); }
+  .option-btn.selected { border-color: var(--red); background: var(--red-light); }
+  .option-btn.correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+  .option-btn.incorrect { border-color: var(--danger); background: var(--danger-bg); color: var(--danger); }
+  .option-letter { width: 22px; height: 22px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 1px; font-family: var(--mono); }
+  .submit-btn { background: var(--red); color: white; border: none; padding: 9px 22px; border-radius: var(--radius); font-family: var(--font); font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 14px; }
+  .submit-btn:disabled { background: var(--text-hint); cursor: not-allowed; }
+  .explanation { margin-top: 14px; padding: 13px; background: var(--info-bg); border: 1px solid rgba(24,95,165,0.18); border-radius: var(--radius); font-size: 13px; color: var(--info); display: none; line-height: 1.6; }
+  .explanation.show { display: block; }
+  .quiz-nav { display: flex; gap: 10px; margin-top: 14px; }
+  .nav-btn { padding: 7px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-family: var(--font); font-size: 13px; cursor: pointer; color: var(--text); transition: all 0.15s; }
+  .nav-btn:hover { border-color: var(--red); color: var(--red); }
+  .nav-btn:disabled { color: var(--text-hint); cursor: not-allowed; }
+  .nav-btn.primary { background: var(--red); color: white; border-color: var(--red); }
+  .score-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; display: none; }
+  .score-card.show { display: block; }
+  .score-big { font-size: 60px; font-weight: 300; color: var(--red); font-family: var(--mono); }
+  .score-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+  .fact-card { background: var(--bg); border-radius: var(--radius); padding: 12px 14px; border-left: 3px solid var(--red); }
+  .fact-card .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .fact-card .value { font-size: 13px; font-weight: 500; }
+  .domain-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .domain-row:last-child { border-bottom: none; }
+  .domain-bar-wrap { width: 100px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .domain-bar { height: 100%; border-radius: 3px; }
+
+  /* AI TUTOR */
+  .tutor-area { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); display: flex; flex-direction: column; height: 500px; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .msg { max-width: 88%; padding: 11px 15px; border-radius: var(--radius-lg); font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
+  .msg.user { align-self: flex-end; background: var(--red); color: white; border-bottom-right-radius: 4px; }
+  .msg.assistant { align-self: flex-start; background: var(--bg); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+  .msg.thinking { align-self: flex-start; background: var(--bg); border: 1px solid var(--border); color: var(--text-muted); font-style: italic; font-size: 13px; border-bottom-left-radius: 4px; }
+  .chat-input-row { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--border); }
+  .chat-input { flex: 1; border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 12px; font-family: var(--font); font-size: 14px; outline: none; background: var(--bg); }
+  .chat-input:focus { border-color: var(--red); }
+  .chat-send { background: var(--red); color: white; border: none; border-radius: var(--radius); padding: 8px 16px; font-family: var(--font); font-size: 14px; cursor: pointer; }
+  .chat-send:disabled { background: var(--text-hint); cursor: not-allowed; }
+  .quick-questions { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+  .quick-q { padding: 5px 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); font-size: 12px; cursor: pointer; color: var(--text-muted); transition: all 0.15s; }
+  .quick-q:hover { border-color: var(--red); color: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">250-602</div>
+  <div>
+    <h1>Carbon Black Cloud — Admin Operations Study Guide</h1>
+    <div class="header-sub">Console navigation · Step-by-step SOPs · Admin-focused practice questions</div>
+  </div>
+</div>
+
+<nav class="top-nav">
+  <button class="top-tab active" onclick="switchTab('guide',this)">Study Guide</button>
+  <button class="top-tab" onclick="switchTab('quiz',this)">Admin Quiz</button>
+  <button class="top-tab" onclick="switchTab('tutor',this)">AI Tutor</button>
+</nav>
+
+<div class="main">
+
+  <!-- STUDY GUIDE -->
+  <div class="section active" id="section-guide">
+    <div class="domain-nav" id="domainNav"></div>
+    <div id="domainCards"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="section" id="section-quiz">
+    <div class="quiz-progress">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progressText">0 / 50</div>
+    </div>
+    <div id="quizArea"></div>
+    <div class="score-card" id="scoreCard">
+      <div class="score-big" id="scoreBig"></div>
+      <div class="score-label">correct</div>
+      <div style="font-size:18px;font-weight:500;margin-top:14px;" id="scorePass"></div>
+      <div class="score-grid" id="scoreGrid"></div>
+      <div id="domainBreakdown" style="text-align:left;margin-top:16px;"></div>
+      <button class="nav-btn primary" onclick="resetQuiz()" style="margin-top:16px;">Retake</button>
+    </div>
+  </div>
+
+  <!-- AI TUTOR -->
+  <div class="section" id="section-tutor">
+    <p style="font-size:14px;color:var(--text-muted);margin-bottom:14px;">Ask me to walk through any admin task step by step, quiz you on console navigation, or explain where something lives in the product.</p>
+    <div class="quick-questions" id="quickQuestions"></div>
+    <div class="tutor-area">
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg assistant">Ready, Ron. Ask me to walk through any admin task — "how do I add a user?", "where do I download a sensor installer?", "what are the steps to triage an alert?" — and I'll give you the exact console path and steps.</div>
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" placeholder="e.g. Walk me through creating a new policy from scratch" onkeydown="if(event.key==='Enter')sendChat()" />
+        <button class="chat-send" id="chatSend" onclick="sendChat()">Send</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const DOMAINS = [
+  {
+    id: 'nav', icon: '🗺', title: 'Console Navigation', subtitle: 'Where everything lives — the full menu map',
+    html: `
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">🗺</div><div><h2>CBC Console Menu Map</h2><p>The top-level navigation structure you need to know cold</p></div></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Menu Item</th><th>What Lives Here</th><th>Admin Tasks</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Endpoints</strong></td><td>All managed sensors, device inventory, sensor health</td><td>View sensor status, reassign policy groups, deregister sensors, search by device name/OS/policy</td></tr>
+            <tr><td><strong>Alerts</strong></td><td>All active and historical alerts across the environment</td><td>Triage alerts, filter by severity/type, dismiss, assign, quarantine from alert view</td></tr>
+            <tr><td><strong>Investigate</strong></td><td>Process search (EEDR), binary search, enriched event search</td><td>Threat hunting, process tree analysis, search by hash/cmdline/parent process</td></tr>
+            <tr><td><strong>Enforce</strong></td><td>Policies, rules, reputation overrides</td><td>Create/edit policies, configure rules, manage reputation, set enforcement levels</td></tr>
+            <tr><td><strong>Audit & Remediation</strong></td><td>Live Query — osquery-based endpoint querying</td><td>Write and run SQL queries, schedule queries, view results, export compliance data</td></tr>
+            <tr><td><strong>Settings</strong></td><td>Users, roles, API keys, notifications, org settings</td><td>Add/manage users, assign roles, manage API access keys, configure SIEM notifications</td></tr>
+            <tr><td><strong>Downloads</strong></td><td>Sensor installers for all platforms</td><td>Download sensor packages for Windows/macOS/Linux, get company codes for registration</td></tr>
+          </tbody>
+        </table></div>
+        <div class="tip">The exam will ask "where do you go to do X" — know this table. The most common traps: sensor installers are under Downloads (not Endpoints), user management is under Settings (not Admin), and Live Query is under Audit & Remediation (not Investigate).</div>
+        <div class="lab">Open your lab console right now and click through every top-level menu item. Find each area in the table above. This takes 5 minutes and is the single most valuable thing you can do.</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">⚡</div><div><h2>Quick Reference — Console Paths</h2><p>The exact navigation path for the most-tested admin tasks</p></div></div>
+        <div class="qref-grid">
+          <div class="qref-item"><div class="qref-label">Add a new user</div><div class="qref-path">Settings → Users → Add User</div></div>
+          <div class="qref-item"><div class="qref-label">Download sensor installer</div><div class="qref-path">Downloads → (select OS)</div></div>
+          <div class="qref-item"><div class="qref-label">Create a new policy</div><div class="qref-path">Enforce → Policies → Add Policy</div></div>
+          <div class="qref-item"><div class="qref-label">View all sensors</div><div class="qref-path">Endpoints → (filter/search)</div></div>
+          <div class="qref-item"><div class="qref-label">Quarantine an endpoint</div><div class="qref-path">Endpoints → select device → Quarantine  OR  Alerts → alert → Quarantine</div></div>
+          <div class="qref-item"><div class="qref-label">Run a Live Query</div><div class="qref-path">Audit & Remediation → New Query</div></div>
+          <div class="qref-item"><div class="qref-label">Open Live Response</div><div class="qref-path">Endpoints → select device → Live Response  OR  Alerts → alert → Live Response</div></div>
+          <div class="qref-item"><div class="qref-label">Ban a file hash</div><div class="qref-path">Enforce → Reputation → Add → enter hash  OR  Alerts → alert → Ban Hash</div></div>
+          <div class="qref-item"><div class="qref-label">View/manage API keys</div><div class="qref-path">Settings → API Access → Add API Key</div></div>
+          <div class="qref-item"><div class="qref-label">Configure notifications</div><div class="qref-path">Settings → Notifications</div></div>
+          <div class="qref-item"><div class="qref-label">Search process events</div><div class="qref-path">Investigate → Process Search</div></div>
+          <div class="qref-item"><div class="qref-label">View watchlists</div><div class="qref-path">Investigate → Watchlists</div></div>
+        </div>
+      </div>
+    `
+  },
+
+  {
+    id: 'users', icon: '👥', title: 'Users & Roles', subtitle: 'Adding users, assigning roles, what each role can do',
+    html: `
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">👥</div><div><h2>User & Role Management</h2><p>Settings → Users</p></div></div>
+        <div class="nav-path"><span class="click">Settings</span><span class="sep">→</span><span class="click">Users</span><span class="sep">→</span><span class="current">Add User</span></div>
+
+        <h3 class="sub">How to Add a New User</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>Settings → Users</strong></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Click <strong>Add User</strong> (top right)</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">Enter the user's <strong>email address</strong> — this is their login identity</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text">Assign a <strong>Role</strong> — Administrator, Analyst, Read Only, or a custom role if configured</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">Click <strong>Save</strong> — the user receives an email invitation to set their password</div></div>
+        </div>
+
+        <h3 class="sub">Role Permissions — Know This Table Cold</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Capability</th><th>Administrator</th><th>Analyst</th><th>Read Only</th></tr></thead>
+          <tbody>
+            <tr><td>View alerts and events</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Export alert/event data</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td>Dismiss / close alerts</td><td>✓</td><td>✓</td><td>✗</td></tr>
+            <tr><td>Quarantine endpoint</td><td>✓</td><td>✓</td><td>✗</td></tr>
+            <tr><td>Use Live Response</td><td>✓</td><td>✓</td><td>✗</td></tr>
+            <tr><td>Ban file hashes</td><td>✓</td><td>✓</td><td>✗</td></tr>
+            <tr><td>Run Live Query</td><td>✓</td><td>✓</td><td>✗</td></tr>
+            <tr><td>Create / edit policies</td><td>✓</td><td>✗</td><td>✗</td></tr>
+            <tr><td>Manage users and roles</td><td>✓</td><td>✗</td><td>✗</td></tr>
+            <tr><td>Manage API keys</td><td>✓</td><td>✗</td><td>✗</td></tr>
+            <tr><td>Configure org settings</td><td>✓</td><td>✗</td><td>✗</td></tr>
+          </tbody>
+        </table></div>
+        <div class="tip">The exam will give you a scenario — "a user needs to do X but NOT do Y" — and ask which role fits. The key distinction: Analyst can investigate and respond but cannot touch policies, users, or org settings. Read Only can view and export but cannot take any action.</div>
+        <div class="lab">In your lab: go to Settings → Users, add a test user with the Analyst role, then verify what menu options are available. Then change to Read Only and notice what disappears.</div>
+      </div>
+    `
+  },
+
+  {
+    id: 'sensors', icon: '📡', title: 'Sensor Deployment', subtitle: 'Downloading, installing, and managing sensors',
+    html: `
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">📡</div><div><h2>Downloading Sensor Installers</h2><p>Downloads (top nav)</p></div></div>
+        <div class="nav-path"><span class="current">Downloads</span><span class="sep">→</span><span class="click">Select OS</span><span class="sep">→</span><span class="click">Download</span></div>
+
+        <h3 class="sub">Steps to Download and Deploy a Sensor</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>Downloads</strong> in the top navigation</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Select your <strong>platform</strong> — Windows, macOS, or Linux</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">Select the <strong>sensor version</strong> (usually latest stable)</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text">Note the <strong>Company Code</strong> displayed — the sensor uses this to register to your org during install. Without it, the sensor installs but cannot register.</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">Download the installer package and deploy via your chosen method (manual run, SCCM, Intune, GPO)</div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-text">After install, verify the sensor appears in <strong>Endpoints</strong> with a green connected status</div></div>
+        </div>
+        <div class="tip">The Company Code is the critical piece that ties the sensor to your CBC org. This is a common exam question — "what does the sensor need during installation to register to the correct organization?" Answer: the Company Code.</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">🖥</div><div><h2>Managing Sensors</h2><p>Endpoints page</p></div></div>
+        <div class="nav-path"><span class="current">Endpoints</span></div>
+
+        <h3 class="sub">What You Can Do From the Endpoints Page</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Task</th><th>How</th></tr></thead>
+          <tbody>
+            <tr><td>View sensor health status</td><td>Green dot = active/connected. Yellow = degraded. Red = error. Grey = inactive/offline.</td></tr>
+            <tr><td>Search for a specific device</td><td>Search bar — filter by device name, OS, policy, sensor version, status</td></tr>
+            <tr><td>Change a sensor's policy group</td><td>Select device → Edit → change Policy Group → Save. Takes effect on next check-in.</td></tr>
+            <tr><td>Deregister a sensor</td><td>Select device → Deregister. Removes it from CBC management. Sensor software may still be installed on endpoint.</td></tr>
+            <tr><td>Quarantine an endpoint</td><td>Select device → Quarantine. Isolates from network, keeps CBC comms open.</td></tr>
+            <tr><td>Open Live Response</td><td>Select device → Live Response. Opens interactive session (sensor must be online).</td></tr>
+            <tr><td>View sensor details</td><td>Click device name → see OS, last check-in, sensor version, policy, IP, MAC address</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 class="sub">Sensor Status Colors</h3>
+        <div class="qref-grid">
+          <div class="qref-item"><div class="qref-label" style="color:var(--success)">● Active</div><div class="qref-value">Sensor connected, checking in normally, enforcing policy</div></div>
+          <div class="qref-item"><div class="qref-label" style="color:var(--amber)">● Degraded</div><div class="qref-value">Sensor connected but experiencing issues — check sensor details</div></div>
+          <div class="qref-item"><div class="qref-label" style="color:var(--danger)">● Error</div><div class="qref-value">Sensor has an error state — requires investigation</div></div>
+          <div class="qref-item"><div class="qref-label" style="color:var(--text-hint)">● Inactive</div><div class="qref-value">Sensor not checked in — endpoint likely offline</div></div>
+        </div>
+        <div class="lab">In your lab: go to Endpoints, find a sensor, and walk through changing its policy group. Then practice searching by OS type and by sensor status. Know how to get to the device detail page.</div>
+      </div>
+    `
+  },
+
+  {
+    id: 'policies', icon: '📋', title: 'Policy Configuration', subtitle: 'Creating policies, configuring rules, enforcement settings',
+    html: `
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">📋</div><div><h2>Creating and Configuring Policies</h2><p>Enforce → Policies</p></div></div>
+        <div class="nav-path"><span class="click">Enforce</span><span class="sep">→</span><span class="click">Policies</span><span class="sep">→</span><span class="current">Add Policy</span></div>
+
+        <h3 class="sub">How to Create a New Policy</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>Enforce → Policies</strong></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Click <strong>Add Policy</strong> — name it and optionally clone from an existing policy as a starting point</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">Configure the <strong>Prevention</strong> tab — set reputation handling for each category: Known Malware, Suspect Malware, PUP, Adaptive Allowlist, Not Listed</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text">Configure the <strong>Local Scan</strong> tab — enable/disable on-access scanning with local signatures</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">Configure the <strong>Sensor</strong> tab — choose which capabilities and event types the sensor collects</div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-text">Add <strong>Rules</strong> — use the Rules tab to add specific allow/block rules beyond reputation handling</div></div>
+          <div class="step"><div class="step-num">7</div><div class="step-text">Click <strong>Save</strong> — the policy is now available to assign to sensor groups</div></div>
+        </div>
+
+        <h3 class="sub">Policy Tabs — What Each One Controls</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Tab</th><th>What It Controls</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Prevention</strong></td><td>Reputation-based actions per file category — what happens when a Known Malware, Suspect Malware, PUP, or Not Listed file runs. Options: Block & Report, Report, Allow.</td></tr>
+            <tr><td><strong>Local Scan</strong></td><td>On-access file scanning using local signatures. Works offline. Generates alerts on signature matches.</td></tr>
+            <tr><td><strong>Sensor</strong></td><td>Which event types the sensor collects and streams — network events, process events, file events, USB events. More = higher telemetry volume and resource use.</td></tr>
+            <tr><td><strong>Rules</strong></td><td>Specific behavioral rules — Allow or Block for specific paths, processes, applications, scripts. Report vs. Enforce toggle per rule.</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 class="sub">Reputation Handling Options Per Category</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Action</th><th>What It Does</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Block & Report</strong></td><td>Prevents execution AND generates an alert. Most restrictive.</td></tr>
+            <tr><td><strong>Report</strong></td><td>Allows execution but logs an event. No blocking. Use for monitoring before enforcing.</td></tr>
+            <tr><td><strong>Allow</strong></td><td>Permits execution silently. No event generated unless a separate rule fires.</td></tr>
+            <tr><td><strong>Terminate</strong></td><td>Kills the process after it starts. More aggressive than Block — used when you want to stop something that has already launched.</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="tip">Default policy is <strong>Standard</strong>. The exam will ask which policy sensors go into if not specifically assigned — answer is Standard. Know the policy tab names: Prevention, Local Scan, Sensor, Rules.</div>
+        <div class="lab">In your lab: create a new policy by cloning Standard. Change the PUP handling from Report to Block & Report. Save it. Then assign a test sensor to it from the Endpoints page and verify the policy applied.</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">⚙️</div><div><h2>Managing Rules Within a Policy</h2><p>Enforce → Policies → [Policy Name] → Rules</p></div></div>
+        <div class="nav-path"><span class="click">Enforce</span><span class="sep">→</span><span class="click">Policies</span><span class="sep">→</span><span class="click">[Policy]</span><span class="sep">→</span><span class="current">Rules tab</span></div>
+
+        <div class="sop">
+          <div class="sop-title">Adding a Rule to a Policy</div>
+          <div class="step"><div class="step-num">1</div><div class="step-text">Open a policy and go to the <strong>Rules</strong> tab</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Click <strong>Add Rule</strong> — select the rule type (e.g., Allow specific application, Block specific path)</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">Set the rule to <strong>Report</strong> mode first — see what it matches before enforcing</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text">Review matching events in the <strong>Alerts / Investigate</strong> pages over several days</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">Switch to <strong>Enforce</strong> mode once you're confident there are no false positives</div></div>
+        </div>
+        <div class="warn">Always use Report mode before Enforce. The exam will test this — "what should you do before enforcing a new rule?" Answer: set it to Report mode to evaluate impact.</div>
+      </div>
+    `
+  },
+
+  {
+    id: 'alerts', icon: '🔔', title: 'Alert Triage', subtitle: 'Processing alerts step by step — the full workflow',
+    html: `
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">🔔</div><div><h2>Alert Triage Workflow</h2><p>Alerts (top nav)</p></div></div>
+        <div class="nav-path"><span class="current">Alerts</span></div>
+
+        <h3 class="sub">Alert Triage — Step by Step</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Go to Alerts.</strong> Filter by Status: Open. Sort by Severity: High first.</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Click the alert</strong> to open the detail view. Read the alert reason — what triggered it and which detection type (CB Analytics, Watchlist, Device Control).</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Examine the process tree.</strong> Identify the parent process, the offending process, any child processes. This tells you the full execution chain.</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Check the affected device</strong> — who is the user, is this a high-value system (domain controller, server, executive laptop)?</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Determine: True Positive or False Positive.</strong> Does the behavior match a known threat pattern? Is it explainable by legitimate activity?</div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-text"><strong>Take action:</strong><br>— True positive → Quarantine endpoint and/or open Live Response<br>— Known malicious file → Ban the hash<br>— False positive → Dismiss the alert, optionally create an exception rule</div></div>
+          <div class="step"><div class="step-num">7</div><div class="step-text"><strong>Document the action</strong> — add a note/comment to the alert before closing. This builds the audit trail.</div></div>
+        </div>
+
+        <h3 class="sub">Alert Actions Available From the Alert View</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Action</th><th>What It Does</th><th>When to Use</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Quarantine</strong></td><td>Isolates the endpoint — blocks all network traffic except CBC cloud communication</td><td>Confirmed active threat, need to stop lateral movement immediately</td></tr>
+            <tr><td><strong>Ban Hash</strong></td><td>Blocks the specific file hash across all endpoints in scope</td><td>Confirmed malicious file that should never run anywhere</td></tr>
+            <tr><td><strong>Live Response</strong></td><td>Opens interactive shell to the endpoint for investigation and remediation</td><td>Need to pull files, kill processes, run commands, or collect evidence</td></tr>
+            <tr><td><strong>Dismiss</strong></td><td>Marks the alert as reviewed, removes from active queue — does NOT affect the endpoint</td><td>Confirmed false positive or already-remediated event</td></tr>
+            <tr><td><strong>Assign</strong></td><td>Assigns the alert to a specific analyst for ownership</td><td>Team workflows, distributing investigation load</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 class="sub">Alert Types — What Generates Each</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Alert Type</th><th>Generated By</th><th>Key Characteristic</th></tr></thead>
+          <tbody>
+            <tr><td><strong>CB Analytics</strong></td><td>Behavioral detection engine — identifies suspicious behavior patterns</td><td>Most common. Based on what the process DID, not just what it is. MITRE ATT&CK mapped.</td></tr>
+            <tr><td><strong>Watchlist</strong></td><td>Enterprise EDR watchlist query match</td><td>Requires EEDR license. Fires when telemetry matches a saved threat hunt query.</td></tr>
+            <tr><td><strong>Device Control</strong></td><td>Unauthorized USB/removable device connected</td><td>Fires when a device not in the allowlist is attached.</td></tr>
+            <tr><td><strong>Intrusion Detection</strong></td><td>Network-based threat signatures (IDS)</td><td>Network-level detection. Less common on the exam.</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="tip">The exam will ask about alert triage order and actions. The key sequence is always: investigate first → determine true/false positive → then act. Never quarantine before investigating unless there's an obvious emergency.</div>
+        <div class="lab">In your lab: open the Alerts page. Filter by Open alerts. Click one and trace the full process tree. Practice using the filter options — filter by severity, by device, by alert type. Find where the Dismiss and Quarantine buttons are.</div>
+      </div>
+    `
+  },
+
+  {
+    id: 'liveresponse', icon: '💻', title: 'Live Response', subtitle: 'Opening sessions, available commands, what you can do',
+    html: `
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">💻</div><div><h2>Live Response</h2><p>Endpoints → device → Live Response  OR  Alerts → alert → Live Response</p></div></div>
+        <div class="nav-path"><span class="click">Endpoints</span><span class="sep">→</span><span class="click">[Device Name]</span><span class="sep">→</span><span class="current">Live Response</span></div>
+
+        <h3 class="sub">How to Start a Live Response Session</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text">Navigate to <strong>Endpoints</strong> and find the target device — OR navigate from the alert directly</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Confirm the sensor status is <strong>Active (green)</strong> — Live Response requires the endpoint to be online and connected to CBC</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">Click <strong>Live Response</strong> — a terminal window opens in the browser</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text">Wait for the session to establish — this takes a few seconds while CBC routes the connection through the cloud channel</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">You are now in an <strong>interactive command shell</strong> on the remote endpoint</div></div>
+        </div>
+
+        <h3 class="sub">What You Can Do in Live Response</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Task</th><th>How</th></tr></thead>
+          <tbody>
+            <tr><td>List files in a directory</td><td><code>dir</code> (Windows) / <code>ls</code> (macOS/Linux)</td></tr>
+            <tr><td>View running processes</td><td><code>ps</code></td></tr>
+            <tr><td>Kill a process</td><td><code>kill [PID]</code></td></tr>
+            <tr><td>Download a file from the endpoint</td><td><code>get [filepath]</code> — pulls file to your workstation for analysis</td></tr>
+            <tr><td>Upload a file to the endpoint</td><td><code>put [localfile]</code> — push a remediation tool or script</td></tr>
+            <tr><td>Delete a file</td><td><code>rm [filepath]</code></td></tr>
+            <tr><td>Run a command</td><td>Type any OS-level command — runs on the remote endpoint</td></tr>
+            <tr><td>View network connections</td><td><code>netstat</code></td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 class="sub">Key Facts About Live Response</h3>
+        <div class="info">Live Response works on <strong>quarantined endpoints</strong>. When an endpoint is quarantined, the CBC cloud communication channel stays open — Live Response runs over that channel. You can investigate and remediate without lifting the quarantine.</div>
+        <div class="info">Live Response requires the sensor to be <strong>online and connected</strong>. If the endpoint is offline (grey status), you cannot start a session.</div>
+        <div class="info">Live Response sessions are <strong>logged</strong> — every command and action is recorded in CBC for audit purposes. You have a full record of what was done during the session.</div>
+        <div class="warn">Live Response requires at minimum the <strong>Analyst role</strong>. Read Only users cannot open Live Response sessions.</div>
+        <div class="tip">Common exam scenario: "An analyst needs to pull a suspicious file from a quarantined endpoint for forensic analysis — is this possible?" Yes — Live Response works through the quarantine because the CBC channel stays open.</div>
+        <div class="lab">In your lab: navigate to an endpoint, click Live Response, and run <code>ps</code> and <code>dir</code>. Practice the <code>get</code> command to pull a benign file. This builds muscle memory for the workflow.</div>
+      </div>
+    `
+  },
+
+  {
+    id: 'workload', icon: '☁️', title: 'CBC Workload', subtitle: 'vCenter integration, workload sensor deployment, VM management',
+    html: `
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">☁️</div><div><h2>What CBC Workload Is</h2><p>vSphere-aware endpoint protection for virtual workloads</p></div></div>
+        <div class="info"><strong>CBC Workload = the same CBC sensor, deployed inside VMs, with VMware vCenter integration layered on top for VM-aware management.</strong> It is NOT agentless. The sensor still runs inside each VM's guest OS. What vCenter adds is automatic discovery, inventory organization, and vulnerability context.</div>
+
+        <h3 class="sub">What vCenter Integration Adds (vs. Standard Endpoint)</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Capability</th><th>Standard CBC Endpoint</th><th>CBC Workload (with vCenter)</th></tr></thead>
+          <tbody>
+            <tr><td>Sensor protection</td><td>✓ Same sensor</td><td>✓ Same sensor inside VM guest OS</td></tr>
+            <tr><td>VM discovery</td><td>Manual enrollment only</td><td>✓ Automatic — VMs pulled from vCenter inventory</td></tr>
+            <tr><td>Organized by datacenter/cluster</td><td>✗ Flat list by device name</td><td>✓ Organized by datacenter → cluster → host → VM</td></tr>
+            <tr><td>Vulnerability management</td><td>✗ Not available</td><td>✓ CVE data surfaced alongside VM inventory</td></tr>
+            <tr><td>vMotion transparency</td><td>N/A</td><td>✓ Sensor maintains registration and policy through vMotion</td></tr>
+            <tr><td>Template/clone support</td><td>Manual per clone</td><td>✓ Deploy sensor to template — clones inherit sensor</td></tr>
+          </tbody>
+        </table></div>
+        <div class="tip">The exam will ask what CBC Workload requires — answer is VMware vCenter. Not Hyper-V, not containers, not a cloud provider. vCenter is the required integration.</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">🔌</div><div><h2>Setting Up the vCenter Integration</h2><p>Settings → Integrations → VMware vCenter</p></div></div>
+        <div class="nav-path"><span class="click">Settings</span><span class="sep">→</span><span class="click">Integrations</span><span class="sep">→</span><span class="current">VMware vCenter</span></div>
+
+        <h3 class="sub">Steps to Connect vCenter to CBC</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>Settings → Integrations → VMware vCenter</strong></div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Click <strong>Add vCenter</strong></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">Enter the <strong>vCenter FQDN or IP address</strong></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text">Enter a <strong>vCenter service account username and password</strong> — this account needs read access to the vCenter inventory (read-only is sufficient for discovery)</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">Click <strong>Connect</strong> — CBC validates the connection and begins pulling the vCenter inventory</div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-text">Once connected, the VM inventory appears in CBC organized by <strong>Datacenter → Cluster → Host → VM</strong></div></div>
+          <div class="step"><div class="step-num">7</div><div class="step-text">VMs with CBC sensors already installed will show as managed. VMs without sensors will show as <strong>unmanaged</strong> — eligible for sensor deployment.</div></div>
+        </div>
+        <div class="warn">The vCenter service account credentials are stored in CBC. Use a dedicated read-only service account — do not use a personal admin account. If the password changes, the integration will break and must be updated.</div>
+        <div class="tip">After connecting vCenter, CBC shows all VMs — managed (sensor installed) and unmanaged (no sensor). The exam may ask: "What does CBC show for a VM with no sensor installed?" Answer: it appears in the inventory as unmanaged/unprotected.</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">📦</div><div><h2>Deploying Sensors to VMs</h2><p>Two methods: Deploy from console OR deploy to VM template</p></div></div>
+
+        <h3 class="sub">Method 1 — Deploy Sensor from the CBC Console (individual VMs)</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text">After vCenter is connected, navigate to the <strong>Workloads</strong> view in CBC — find unmanaged VMs</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Select the target VM(s) and click <strong>Deploy Sensor</strong></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">CBC uses the vCenter connection to push the sensor installer to the guest OS — requires <strong>VMware Tools</strong> to be installed and running inside the VM</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text">Select the <strong>sensor version</strong> and the <strong>policy group</strong> to assign the VM to</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">Click <strong>Deploy</strong> — CBC installs the sensor inside the guest OS remotely</div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-text">Monitor deployment status in the console — VM transitions from Unmanaged to <strong>Active</strong> when complete</div></div>
+        </div>
+        <div class="warn"><strong>VMware Tools is required</strong> for console-based sensor deployment. Without it, CBC cannot remotely push the installer into the guest OS. If VMware Tools is missing, use the manual installer method instead.</div>
+
+        <h3 class="sub">Method 2 — Deploy to VM Template (for clones at scale)</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text">Download the sensor installer from <strong>Downloads</strong> in the CBC console (same as standard deployment)</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Power on the <strong>VM template</strong> (or a reference VM that will become the template)</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">Install the CBC sensor manually inside the template VM's guest OS, using the <strong>Company Code</strong></div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Before converting back to template:</strong> run the CBC sensor's <strong>vdi-cleaner</strong> or equivalent prep script to clear the sensor's unique identity — clones must register as new unique agents, not copies of the template's registration</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">Convert the VM back to a template</div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-text">Every clone deployed from this template will have the sensor pre-installed — each clone registers as a new unique sensor on first boot and receives its policy automatically</div></div>
+        </div>
+        <div class="tip">Template-based deployment is the correct approach for VDI environments (Horizon, Citrix). Configure once in the golden image — every clone inherits the sensor. The exam may ask about managing sensors at scale in VDI environments — this is the answer.</div>
+        <div class="lab">In your lab: connect your lab vCenter to CBC under Settings → Integrations. See what VMs appear. Identify which show as managed vs. unmanaged. Practice selecting an unmanaged VM and initiating a sensor deploy (you can cancel before confirming if you don't want to actually deploy).</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">🖥</div><div><h2>Managing Workload Sensors in the Console</h2><p>Workloads view — organized by vCenter inventory</p></div></div>
+
+        <h3 class="sub">The Workloads View vs. the Endpoints View</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th></th><th>Endpoints View</th><th>Workloads View</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Organization</strong></td><td>Flat list — filter by OS, policy, status</td><td>Hierarchy — Datacenter → Cluster → Host → VM</td></tr>
+            <tr><td><strong>VM discovery</strong></td><td>Only shows enrolled sensors</td><td>Shows ALL VMs from vCenter — managed AND unmanaged</td></tr>
+            <tr><td><strong>Deploy sensor</strong></td><td>Not available — sensors must be pre-installed</td><td>✓ Deploy sensor from console to unmanaged VMs</td></tr>
+            <tr><td><strong>Vulnerability data</strong></td><td>Not available</td><td>✓ CVE data displayed per VM</td></tr>
+            <tr><td><strong>vMotion awareness</strong></td><td>No — VM may appear to move or disappear</td><td>✓ vCenter context keeps VM identity stable through vMotion</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 class="sub">Workload-Specific Admin Tasks</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Task</th><th>How</th></tr></thead>
+          <tbody>
+            <tr><td>View unprotected VMs</td><td>Workloads view → filter by Status: Unmanaged — shows every VM without a CBC sensor</td></tr>
+            <tr><td>Deploy sensor to a VM</td><td>Workloads view → select unmanaged VM → Deploy Sensor → select version and policy → Deploy</td></tr>
+            <tr><td>View VM vulnerability data</td><td>Workloads view → select VM → Vulnerabilities tab — shows CVEs for installed software</td></tr>
+            <tr><td>Change policy assignment</td><td>Same as standard: Endpoints or Workloads view → select VM → Edit → change Policy Group</td></tr>
+            <tr><td>Quarantine a VM</td><td>Same as standard: select VM → Quarantine. Note: on a VM this isolates the guest OS network — the physical host and other VMs are unaffected</td></tr>
+            <tr><td>View VMs by datacenter</td><td>Workloads view → expand the vCenter hierarchy tree on the left panel</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 class="sub">Key Operational Facts for the Exam</h3>
+        <div class="info"><strong>vMotion is transparent to the CBC sensor.</strong> When a VM moves between ESXi hosts via vMotion, the CBC sensor inside the guest OS doesn't know or care — it keeps running, stays registered, and keeps enforcing the same policy. No re-enrollment needed.</div>
+        <div class="info"><strong>Quarantine on a VM isolates the guest, not the host.</strong> If you quarantine a VM in CBC, only that VM's network access is isolated. The ESXi host keeps running, other VMs on the same host are unaffected, and management traffic to vCenter continues normally.</div>
+        <div class="info"><strong>Snapshot/revert can cause sensor identity issues.</strong> If a VM is reverted to a snapshot taken before the sensor was installed, the sensor will be gone. If reverted to a snapshot taken after install but the sensor had already registered, there can be duplicate registration issues. Best practice: take snapshots AFTER sensor installation and initial registration.</div>
+        <div class="warn"><strong>Powered-off VMs show in vCenter but not in CBC Endpoints.</strong> CBC can see them in the Workloads view (because vCenter knows they exist), but the sensor is not active and cannot enforce or communicate while the VM is off.</div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">🔒</div><div><h2>Vulnerability Management in CBC Workload</h2><p>Workloads view → VM → Vulnerabilities tab</p></div></div>
+        <div class="nav-path"><span class="click">Workloads</span><span class="sep">→</span><span class="click">[VM Name]</span><span class="sep">→</span><span class="current">Vulnerabilities tab</span></div>
+
+        <div class="kp" style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><div style="width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:8px;"></div><div style="font-size:14px;">CBC Workload surfaces <strong>CVE data</strong> per VM — installed applications matched against known vulnerability databases. This gives a <strong>risk-based view</strong> of the VM estate directly in the CBC console without a separate vulnerability scanner.</div></div>
+        <div class="kp" style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><div style="width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:8px;"></div><div style="font-size:14px;">Each CVE entry shows: <strong>CVE ID, severity score (CVSS), affected application and version, affected VMs, and remediation guidance</strong> (typically: patch the application).</div></div>
+        <div class="kp" style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);"><div style="width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:8px;"></div><div style="font-size:14px;">You can <strong>filter by severity</strong> (Critical, High, Medium, Low) to prioritize remediation. Focus on Critical CVSS score vulnerabilities in production workloads first.</div></div>
+        <div class="kp" style="display:flex;gap:10px;padding:9px 0;"><div style="width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:8px;"></div><div style="font-size:14px;">Vulnerability data is <strong>read-only in CBC</strong> — CBC identifies and displays CVEs but does not patch. Remediation (patching) happens through your normal patch management process.</div></div>
+
+        <div class="tip">If the exam asks "what does CBC Workload add for vulnerability management?" — it surfaces CVE data per VM from the vCenter inventory, providing risk context alongside security posture. It does NOT perform patching.</div>
+        <div class="lab">In your lab if you have CBC Workload configured: open the Workloads view, click on any managed VM, and find the Vulnerabilities tab. See what CVEs are listed. Practice filtering by severity. This is the workflow the exam is testing.</div>
+      </div>
+    `
+  },
+  {
+    id: 'livequery', icon: '🔍', title: 'Live Query', subtitle: 'Running osquery SQL queries for compliance and inventory',
+    html: `
+      <div class="guide-card">
+        <div class="guide-card-header"><div class="guide-icon">🔍</div><div><h2>Live Query — Audit & Remediation</h2><p>Audit & Remediation → New Query</p></div></div>
+        <div class="nav-path"><span class="current">Audit & Remediation</span><span class="sep">→</span><span class="click">New Query</span></div>
+
+        <h3 class="sub">How to Run an Ad Hoc Query</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text">Go to <strong>Audit & Remediation</strong> in the top nav</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Click <strong>New Query</strong></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">Select the <strong>device scope</strong> — all devices, a specific policy group, or individual devices</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text">Write your SQL query in the query editor. Example: <code>SELECT * FROM processes WHERE name = 'cmd.exe'</code></div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">Click <strong>Run</strong> — results return from all online endpoints in the scope within seconds to minutes</div></div>
+          <div class="step"><div class="step-num">6</div><div class="step-text">View results in the table. Click <strong>Export to CSV</strong> for compliance reporting or further analysis</div></div>
+        </div>
+
+        <h3 class="sub">How to Schedule a Recurring Query</h3>
+        <div class="sop">
+          <div class="step"><div class="step-num">1</div><div class="step-text">Write your query (same as ad hoc above)</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">Instead of clicking Run, click <strong>Schedule</strong></div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">Set the <strong>frequency</strong> — hourly, daily, weekly</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text">Give the schedule a name and save — the query runs automatically on the defined interval</div></div>
+          <div class="step"><div class="step-num">5</div><div class="step-text">View results from scheduled runs under <strong>Results</strong> in Audit & Remediation</div></div>
+        </div>
+
+        <h3 class="sub">Most-Tested osquery Tables</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Table</th><th>What It Contains</th><th>Example Use Case</th></tr></thead>
+          <tbody>
+            <tr><td><code>processes</code></td><td>Currently running processes — name, PID, path, parent PID, command line</td><td>Find if a specific process is currently running across the fleet</td></tr>
+            <tr><td><code>programs</code> / <code>software</code></td><td>Installed applications — name, version, install date</td><td>Compliance check: is a specific software installed on all endpoints?</td></tr>
+            <tr><td><code>users</code></td><td>Local user accounts — username, UID, home directory, shell</td><td>Find endpoints with unexpected local admin accounts</td></tr>
+            <tr><td><code>listening_ports</code></td><td>Active network listeners — port, protocol, PID</td><td>Find endpoints with unexpected services listening on unusual ports</td></tr>
+            <tr><td><code>services</code></td><td>Windows services — name, status, start type, executable path</td><td>Check if a specific service is running or disabled across fleet</td></tr>
+            <tr><td><code>registry</code></td><td>Windows registry keys and values</td><td>Check for persistence keys or configuration values</td></tr>
+            <tr><td><code>usb_devices</code></td><td>Currently connected USB devices — vendor, model, serial</td><td>Identify endpoints with USB storage devices connected right now</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 class="sub">Basic SQL Syntax for the Exam</h3>
+        <div class="info">
+          <strong>SELECT all columns:</strong> <code>SELECT * FROM processes</code><br><br>
+          <strong>Filter with WHERE:</strong> <code>SELECT * FROM processes WHERE name = 'powershell.exe'</code><br><br>
+          <strong>Select specific columns:</strong> <code>SELECT name, pid, path FROM processes WHERE name = 'cmd.exe'</code><br><br>
+          <strong>Pattern match:</strong> <code>SELECT * FROM programs WHERE name LIKE '%chrome%'</code>
+        </div>
+
+        <div class="tip">Live Query = point-in-time snapshot of current state. It does NOT show historical data. If a process ran and exited before the query ran, it will not appear. For historical data, use Enterprise EDR process search.</div>
+        <div class="tip">Running = one-time, immediate, ad hoc. Scheduled = recurring on defined interval, continuous compliance monitoring. Know when to use each.</div>
+        <div class="lab">In your lab: go to Audit & Remediation, run <code>SELECT * FROM processes</code> against one endpoint. Then run <code>SELECT name, version FROM programs</code> to see installed software. Then practice scheduling a daily query.</div>
+      </div>
+    `
+  }
+];
+
+const QUESTIONS = [
+  {
+    id:1, domain:'Console Navigation',
+    text:'An administrator needs to download the CBC sensor installer for macOS. Where in the console do they find it?',
+    type:'single',
+    options:['Endpoints → Add Sensor','Settings → Sensor Management','Downloads (top navigation)','Enforce → Sensor Packages'],
+    correct:[2],
+    explanation:'Sensor installers are under Downloads in the top navigation. This is a standalone menu item — not under Endpoints, not under Settings, not under Enforce. This is one of the most common console navigation questions.'
+  },
+  {
+    id:2, domain:'Users & Roles',
+    text:'A new SOC analyst needs to triage alerts, quarantine endpoints, and use Live Response. They should NOT be able to modify policies or manage users. Which role is correct?',
+    type:'single',
+    options:['Administrator','Analyst','Read Only','Custom role required — no built-in role covers this'],
+    correct:[1],
+    explanation:'Analyst covers exactly this use case — alert triage, quarantine, and Live Response are all available. Policy management and user administration require Administrator. Read Only cannot quarantine or use Live Response. No custom role is needed; Analyst is purpose-built for SOC operators.'
+  },
+  {
+    id:3, domain:'Sensor Deployment',
+    text:'During sensor installation, what piece of information does the sensor require to register to the correct CBC organization?',
+    type:'single',
+    options:['The admin\'s email address and password','The Company Code found in the Downloads section of the console','The organization\'s CBC tenant URL','An API key generated in Settings → API Access'],
+    correct:[1],
+    explanation:'The Company Code is what ties the sensor to your specific CBC organization during installation. It is displayed in the Downloads section alongside the sensor installer. Without it, the sensor installs but cannot register to your org. It is not an API key, not credentials, and not the tenant URL.'
+  },
+  {
+    id:4, domain:'Alert Triage',
+    text:'An analyst opens a HIGH severity CB Analytics alert. What is the correct first step?',
+    type:'single',
+    options:['Immediately quarantine the endpoint','Ban the file hash associated with the alert','Review the alert details and process tree to determine true positive or false positive','Dismiss the alert and open a Live Response session'],
+    correct:[2],
+    explanation:'Alert triage always starts with investigation — review the alert details, examine the process tree, check the affected device context, and determine true positive vs. false positive. Quarantine or hash ban before confirming a true positive risks disrupting legitimate activity. Dismiss is for after you\'ve concluded it\'s not actionable.'
+  },
+  {
+    id:5, domain:'Live Response',
+    text:'An endpoint has been quarantined due to a confirmed malware infection. An analyst needs to pull a suspicious file from that endpoint for forensic analysis. What happens when they try to open a Live Response session on the quarantined endpoint?',
+    type:'single',
+    options:['Live Response fails — quarantine blocks all connectivity including CBC','Live Response succeeds — quarantine blocks all network traffic except the CBC cloud communication channel, which Live Response uses','Live Response is available but read-only on quarantined endpoints','The quarantine must be lifted first, then Live Response can be opened'],
+    correct:[1],
+    explanation:'Quarantine preserves the CBC cloud communication channel specifically. Live Response runs over that preserved channel, so it works normally on quarantined endpoints. This is by design — you need to be able to investigate and remediate without exposing the endpoint to the rest of the network by lifting quarantine.'
+  },
+  {
+    id:6, domain:'Live Query',
+    text:'A compliance team needs a weekly automated report showing all installed software across managed endpoints. Which Live Query approach is correct?',
+    type:'single',
+    options:['Run "SELECT * FROM programs" ad hoc before each weekly compliance meeting','Schedule "SELECT * FROM programs" to run weekly — results automatically available in Audit & Remediation','Create a watchlist query in Enterprise EDR that monitors software installations','Set up a policy rule that reports all software execution events weekly'],
+    correct:[1],
+    explanation:'Scheduling a Live Query is the correct approach for recurring compliance needs. You write the query once, schedule it weekly, and results are automatically collected and available. Running ad hoc before each meeting is manual and error-prone. Watchlists are for security alerting, not compliance inventory. Policy rules are for controlling execution, not generating reports.'
+  },
+  {
+    id:7, domain:'Policy Configuration',
+    text:'An administrator creates a new policy. Which of the following correctly describes the tab where reputation-based prevention settings are configured?',
+    type:'single',
+    options:['The Rules tab — where all blocking decisions are made','The Prevention tab — where you set actions per reputation category (Known Malware, Suspect Malware, PUP, Not Listed)','The Sensor tab — where you configure what the sensor collects','The Local Scan tab — where file-based detections are configured'],
+    correct:[1],
+    explanation:'The Prevention tab controls reputation-based actions — what happens when a file with Known Malware, Suspect Malware, PUP, Adaptive Allowlist, or Not Listed reputation executes. The Rules tab is for specific behavioral rules. The Sensor tab controls telemetry collection. The Local Scan tab controls on-access signature scanning. These four tabs are the policy structure you need to know.'
+  },
+  {
+    id:8, domain:'Sensor Deployment',
+    text:'A sensor is showing as Active (green) in the CBC console but an analyst changed its policy group 2 minutes ago and the new policy doesn\'t seem to be applied yet. What is the most likely explanation?',
+    type:'single',
+    options:['The policy change failed — green status means the old policy is permanently locked','Policy changes require a sensor restart before they take effect','The new policy will be applied on the sensor\'s next check-in to the CBC cloud — this typically happens within a few minutes','The sensor must be deregistered and re-enrolled to pick up a policy group change'],
+    correct:[2],
+    explanation:'Policy changes take effect on the next sensor check-in. The sensor polls the CBC cloud on a defined interval. Two minutes may or may not be enough time depending on the check-in frequency. There is no restart, deregister, or re-enrollment required — just wait for the next check-in. The green status confirms the sensor is healthy and communicating; the new policy will arrive at next poll.'
+  },
+  {
+    id:9, domain:'Policy Configuration',
+    text:'An administrator wants to add a rule to block a specific script execution pattern but is not sure if it will cause false positives. What should they do before setting the rule to Enforce mode?',
+    type:'single',
+    options:['Test the rule on one endpoint in a lab environment only','Deploy the rule in Enforce mode and monitor alerts for 24 hours, then revert if needed','Set the rule to Report mode first — observe what it would affect without blocking anything, then switch to Enforce','Submit the rule to CB support for validation before enabling it'],
+    correct:[2],
+    explanation:'Report mode is the correct approach for any new rule. In Report mode, the rule logs events — showing exactly what would have been blocked — without actually preventing anything. This lets you see scope, identify false positives, and tune before committing to enforcement. This is explicitly called out as an exam objective: "evaluate the impact of rules on endpoints."'
+  },
+  {
+    id:10, domain:'Users & Roles',
+    text:'A Read Only user in CBC wants to dismiss a false positive alert. What happens when they try?',
+    type:'single',
+    options:['They can dismiss the alert but cannot take any follow-up response actions','They cannot dismiss the alert — dismissing requires at minimum Analyst role','They can dismiss the alert and the system automatically logs it was dismissed by a read-only user for audit purposes','Read Only users cannot view alerts at all — only Analyst and Administrator can access the Alerts page'],
+    correct:[1],
+    explanation:'Dismissing an alert is an action that changes the alert\'s state — it requires at minimum Analyst role. Read Only users can VIEW and EXPORT alerts but cannot take any action on them — not dismiss, not quarantine, not hash ban. Read Only users absolutely can access the Alerts page; they just cannot act on what they see.'
+  },
+  {
+    id:11, domain:'Console Navigation',
+    text:'Where in the CBC console would an administrator go to create and manage API keys for third-party integrations?',
+    type:'single',
+    options:['Enforce → Integrations','Endpoints → API Management','Settings → API Access','Investigate → External Tools'],
+    correct:[2],
+    explanation:'API keys are managed under Settings → API Access. This is where you create new API keys, set their permissions/access level, and revoke existing keys. Settings is the home for all administrative configuration that isn\'t directly about endpoints, policies, or security events.'
+  },
+  {
+    id:12, domain:'Live Query',
+    text:'Which SQL query would correctly identify all endpoints where the Windows Remote Management (WinRM) service is currently running?',
+    type:'single',
+    options:['SELECT * FROM processes WHERE name = "winrm.exe"','SELECT * FROM services WHERE name = "WinRM" AND status = "RUNNING"','SELECT * FROM listening_ports WHERE port = 5985','SELECT * FROM programs WHERE name LIKE "%winrm%"'],
+    correct:[1],
+    explanation:'The services table is the correct table for querying Windows service status. The WHERE clause filters for the specific service name and running status. The processes table only shows running processes — WinRM runs as a Windows service managed by svchost.exe, not as a named winrm.exe process. Listening ports tells you something is using the port but not specifically WinRM. Programs shows installed software, not service state.'
+  },
+  {
+    id:13, domain:'Alert Triage',
+    text:'After confirming a true positive alert involving a malicious file, an analyst bans the file hash. What does this action do?',
+    type:'single',
+    options:['Removes the file from the endpoint where the alert fired','Blocks that specific file hash from executing on all endpoints covered by the ban scope','Quarantines all endpoints that have executed that file hash','Sends the file to CB\'s threat research team for analysis'],
+    correct:[1],
+    explanation:'Hash banning blocks that specific SHA-256 hash from executing across all endpoints in the ban scope going forward. It does NOT delete the file from endpoints that already have it, does NOT quarantine endpoints that ran it, and does NOT automatically submit the file anywhere. If you need to remove the file from existing endpoints, that requires Live Response. Hash banning is a prevention action for future execution.'
+  },
+  {
+    id:14, domain:'Sensor Deployment',
+    text:'An analyst notices that an endpoint shows a grey (inactive) status in CBC and no events have been received from it for 18 hours. What is the most likely cause and correct first step?',
+    type:'single',
+    options:['The sensor was automatically deregistered due to inactivity — re-enroll the endpoint','The endpoint is likely offline or has lost connectivity to the CBC cloud — verify the endpoint is powered on and has network access','The sensor version is outdated and needs an upgrade before it can check in','The endpoint\'s sensor needs to be manually restarted from the CBC console'],
+    correct:[1],
+    explanation:'Grey/inactive status means the sensor hasn\'t checked in recently — almost always because the endpoint is offline, powered off, or has lost network connectivity. The first step is to verify the physical/network state of the endpoint. CBC does not auto-deregister inactive sensors. You cannot restart the sensor remotely if the endpoint is offline. Sensor version doesn\'t cause a grey status — outdated sensors still check in.'
+  },
+  {
+    id:15, domain:'Policy Configuration',
+    text:'A company wants all new sensors deployed to workstations to automatically receive a "Workstation Standard" policy without manual assignment. What is the correct approach?',
+    type:'single',
+    options:['Set Workstation Standard as the default policy in Settings → Org Settings','Configure the sensor installer with the policy name embedded','Sensors always go to the Standard policy by default — rename Standard to Workstation Standard','Create a policy group named "Workstation Standard" and use AD group mapping or sensor group rules to automatically assign sensors to it'],
+    correct:[3],
+    explanation:'Automatic policy assignment is achieved through sensor groups and their assignment rules — you can define criteria (AD group, OS type, device name pattern) that automatically place sensors into the correct policy group. The default policy for unassigned sensors is Standard, but you cannot rename Standard or redirect the global default from Settings. The installer does not embed policy names — sensors are assigned to groups after registration.'
+  },
+  {
+    id:16, domain:'Live Response',
+    text:'During a Live Response session on a Windows endpoint, an analyst wants to pull a suspicious executable located at C:\\Users\\victim\\Downloads\\payload.exe back to their workstation for analysis. Which command do they use?',
+    type:'single',
+    options:['download C:\\Users\\victim\\Downloads\\payload.exe','cp C:\\Users\\victim\\Downloads\\payload.exe','get C:\\Users\\victim\\Downloads\\payload.exe','pull C:\\Users\\victim\\Downloads\\payload.exe'],
+    correct:[2],
+    explanation:'The Live Response command to pull a file from the endpoint to your workstation is "get [filepath]". This is the CBC-specific Live Response command syntax. "download" and "pull" are not valid Live Response commands. "cp" is a Unix copy command — not applicable in the CBC Live Response context for transferring files to the analyst\'s workstation.'
+  },
+  {
+    id:17, domain:'Live Query',
+    text:'A compliance audit requires proof that no endpoints have RDP (port 3389) listening externally. Which Live Query returns this information?',
+    type:'single',
+    options:['SELECT * FROM processes WHERE name = "rdp.exe"','SELECT * FROM services WHERE name = "TermService"','SELECT * FROM listening_ports WHERE port = 3389','SELECT * FROM registry WHERE key LIKE "%RDP%"'],
+    correct:[2],
+    explanation:'The listening_ports table shows which ports have active listeners — querying for port 3389 directly answers whether RDP is listening on any endpoint. The processes table wouldn\'t help because RDP is a service, not a standalone process named rdp.exe. The services table tells you the service state but not whether it\'s actively listening. The registry approach is indirect and doesn\'t confirm active listening.'
+  },
+  {
+    id:18, domain:'Alert Triage',
+    text:'Two days after dismissing an alert as a false positive, an analyst realizes it was actually a true positive — the endpoint was compromised. The alert is now in the closed/dismissed state. What can the analyst do?',
+    type:'single',
+    options:['Nothing — dismissed alerts are permanently deleted from the system','Re-open the alert from the closed alerts view and take response actions from there','The incident must now be handled entirely through Live Response — alerts cannot be re-opened','Create a new alert by triggering the same detection on the endpoint again'],
+    correct:[1],
+    explanation:'Dismissed alerts are not deleted — they move to a closed/dismissed state and remain accessible. An analyst can filter for closed alerts, find the dismissed alert, re-open it, and take response actions (quarantine, hash ban, Live Response) from there. Alert dismissal is a workflow action, not a permanent deletion. The full audit trail including who dismissed it and when is preserved.'
+  },
+  {
+    id:21, domain:'CBC Workload',
+    text:'After connecting vCenter to CBC, an administrator sees 200 VMs in the Workloads view. 150 show as "Managed" and 50 show as "Unmanaged." What does Unmanaged mean in this context?',
+    type:'single',
+    options:['Those 50 VMs are powered off and cannot be managed','Those 50 VMs exist in vCenter but do not have a CBC sensor installed in their guest OS','Those 50 VMs are in a different policy group that CBC cannot manage','Those 50 VMs require a separate CBC license before sensors can be deployed'],
+    correct:[1],
+    explanation:'Unmanaged in the Workloads view means the VM exists in vCenter (CBC can see it via the integration) but has no CBC sensor installed inside the guest OS. These are visible because the vCenter integration surfaces the entire VM inventory — managed and unmanaged. From the Workloads view, an admin can select unmanaged VMs and deploy sensors directly to them from the console, provided VMware Tools is installed.'
+  },
+  {
+    id:22, domain:'CBC Workload',
+    text:'An administrator is setting up CBC sensor deployment for a VDI environment using VMware Horizon with hundreds of floating desktops. What is the most operationally efficient approach?',
+    type:'single',
+    options:['Deploy the sensor to each VM individually using the CBC console after each clone is created','Install the CBC sensor into the Horizon golden image/template — every clone deployed from it will have the sensor pre-installed and will register as a new unique agent on first boot','Use the CBC Workload agentless protection mode — no sensor installation needed for VDI','Configure an automated script that deploys the sensor to each VM after login via GPO'],
+    correct:[1],
+    explanation:'Template-based deployment is the correct approach for VDI at scale. Install the sensor into the golden image once, run the sensor prep/cleaner script to clear its unique identity before templating, then every Horizon clone deployed from that template has the sensor pre-installed. Each clone registers as a new unique agent on first boot and automatically receives its policy. This is dramatically more efficient than deploying individually. CBC Workload is not agentless — the sensor is always required.'
+  },
+  {
+    id:23, domain:'CBC Workload',
+    text:'A VM is vMotioned from one ESXi host to another within the same vCenter. What happens to the CBC sensor and its policy assignment?',
+    type:'single',
+    options:['The sensor loses its registration — the VM must be re-enrolled in CBC after vMotion','The sensor continues running normally — vMotion is transparent to the guest OS and therefore transparent to the CBC sensor','The sensor automatically moves to the default Standard policy after vMotion','The sensor pauses enforcement during vMotion and resumes after the VM settles on the new host'],
+    correct:[1],
+    explanation:'vMotion is transparent to the CBC sensor. The sensor runs inside the VM\'s guest OS — it has no awareness of which physical ESXi host it\'s running on. From the sensor\'s perspective, nothing changed. The CBC registration, policy assignment, and enforcement all continue without interruption. This is one of the operational benefits of CBC Workload — VM mobility doesn\'t create security gaps or re-enrollment overhead.'
+  },
+  {
+    id:24, domain:'CBC Workload',
+    text:'What is required inside a VM for the CBC console to remotely push and install a sensor into the guest OS using the Deploy Sensor feature?',
+    type:'single',
+    options:['The VM must be running Windows — remote sensor deployment only works on Windows guests','VMware Tools must be installed and running inside the VM guest OS','The VM must be in a specific vCenter cluster designated for CBC Workload','An SSH key must be pre-configured on the VM for CBC to authenticate the deployment'],
+    correct:[1],
+    explanation:'VMware Tools must be installed and running inside the VM guest OS for console-based remote sensor deployment. CBC uses the VMware Tools communication channel to push the sensor installer into the guest. Without VMware Tools, this remote deployment method cannot work — the fallback is to manually install the sensor inside the VM guest OS using the installer downloaded from the Downloads section, just like a standard endpoint deployment. Remote deployment works across Windows and Linux guests, not just Windows.'
+  },
+  {
+    id:25, domain:'CBC Workload',
+    text:'What does the Vulnerabilities tab on a VM in the CBC Workload view show, and what action does CBC take to remediate identified CVEs?',
+    type:'single',
+    options:['It shows CVEs for installed software on that VM — CBC automatically patches vulnerable applications when a critical CVE is detected','It shows CVEs for installed software on that VM — CBC identifies and displays the vulnerabilities but does NOT patch; remediation happens through your patch management process','It shows CVEs for the ESXi hypervisor only — guest OS vulnerabilities require a separate scanner','It shows only exploited CVEs that have triggered a CBC alert — unexploited vulnerabilities are not displayed'],
+    correct:[1],
+    explanation:'The Vulnerabilities tab surfaces CVE data for software installed inside the VM — matched against vulnerability databases, showing CVE ID, CVSS severity score, affected application and version. CBC is read-only for vulnerability data — it identifies and displays the CVEs but does not patch anything. Remediation requires your normal patch management tooling (WSUS, SCCM, Ansible, etc.). The exam distinguishes between identifying vulnerabilities (CBC Workload) and remediating them (external tooling).'
+  },
+  {
+    id:26, domain:'CBC Workload',
+    text:'An administrator quarantines a VM through CBC because it shows signs of compromise. Which of the following accurately describes the quarantine behavior in a virtualized environment?',
+    type:'single',
+    options:['The ESXi host is quarantined — all VMs on that host lose network access','Only the quarantined VM\'s guest OS network is isolated — the ESXi host, other VMs on the same host, and vCenter management traffic are all unaffected','The VM is powered off by CBC to contain the threat','The VM is migrated to an isolated network segment in vCenter automatically'],
+    correct:[1],
+    explanation:'Quarantine in CBC isolates the guest OS network at the sensor level — it\'s the same quarantine behavior as standard endpoint, applied inside the VM. Only that specific VM loses network connectivity (except the CBC cloud channel, which stays open). The ESXi host continues running normally, other VMs on the same host are completely unaffected, and vCenter management access is uninterrupted. CBC does not power off VMs, does not move them in vCenter, and cannot affect the hypervisor layer.'
+  },
+  {
+    id:19, domain:'Console Navigation',
+    text:'An analyst wants to search for all instances of a specific process name across the environment over the past 7 days using Enterprise EDR. Where in the console do they go?',
+    type:'single',
+    options:['Audit & Remediation → New Query','Alerts → Filter by process name','Investigate → Process Search','Endpoints → Event History'],
+    correct:[2],
+    explanation:'Historical process search is in Investigate → Process Search. This is the Enterprise EDR search interface where you can query historical telemetry by process name, hash, command line, parent process, and more. Audit & Remediation is for Live Query (current state only, no history). Alerts only shows events that generated alerts. "Endpoints → Event History" is not a CBC navigation path.'
+  },
+  {
+    id:20, domain:'Policy Configuration',
+    text:'Which policy tab controls how much telemetry the sensor collects — for example, whether network connection events are streamed to the CBC cloud?',
+    type:'single',
+    options:['Prevention tab','Rules tab','Sensor tab','Local Scan tab'],
+    correct:[2],
+    explanation:'The Sensor tab controls sensor capabilities — which event types are collected and streamed to the CBC cloud (process events, file events, network events, etc.). Enabling more capabilities gives more visibility but increases resource usage and data volume. The Prevention tab controls reputation-based actions. The Rules tab controls behavioral rules. The Local Scan tab controls on-access signature scanning.'
+  },
+  {
+    id:27, domain:'Console Navigation',
+    text:'Where in the CBC console does an administrator go to configure SIEM notifications — for example, to send alert events to a Splunk or QRadar instance via syslog?',
+    type:'single',
+    options:['Enforce → Integrations','Investigate → Export Settings','Settings → Notifications','Alerts → Forwarding Rules'],
+    correct:[2],
+    explanation:'SIEM notification and event forwarding configuration lives under Settings → Notifications. This is where you configure syslog destinations, webhook integrations, and email notifications for CBC events. It is not under Enforce (which is for policies/rules) or Investigate (which is for searching data).'
+  },
+  {
+    id:28, domain:'Users & Roles',
+    text:'An administrator leaves the company. The IT manager wants to ensure the former admin\'s API keys no longer work. Where do they go to revoke them?',
+    type:'single',
+    options:['Endpoints → Access Control','Settings → API Access → find the key → Revoke','Settings → Users → delete the user (this automatically revokes all their keys)','Enforce → Integrations → API Keys'],
+    correct:[1],
+    explanation:'API keys are managed independently from user accounts under Settings → API Access. You find the specific key and revoke it directly. Deleting a user account does not automatically revoke API keys that were associated with them — keys must be revoked separately. Always revoke API keys explicitly when offboarding users who had API access.'
+  },
+  {
+    id:29, domain:'Sensor Deployment',
+    text:'A sensor is deployed on a Windows endpoint but is showing as "Degraded" in the CBC console. The endpoint is online and reachable. What is the most appropriate first diagnostic step from the CBC console?',
+    type:'single',
+    options:['Immediately deregister and re-enroll the sensor','Click the device name to open the sensor detail page — review the sensor status details and any error messages listed','Change the sensor\'s policy group to Default Standard','Run a Live Query against the endpoint to check if the sensor process is running'],
+    correct:[1],
+    explanation:'The sensor detail page (click the device name in Endpoints) shows detailed status information including any error codes or messages explaining the degraded state. This is always the first step before taking any corrective action. Deregistering immediately is premature. Changing policy group won\'t fix a degraded sensor. Live Query requires the sensor to be functional to execute — if the sensor is degraded, Live Query may not work reliably.'
+  },
+  {
+    id:30, domain:'Policy Configuration',
+    text:'A security team wants to set up two different security policies: one for servers (strict — block all suspect malware) and one for developer workstations (permissive — report only). What is the correct approach?',
+    type:'single',
+    options:['Create two separate policies with different Prevention tab settings, then assign servers and developer workstations to their respective policy groups','You cannot have two different policies in CBC — one policy applies to all endpoints in the org','Modify the default Standard policy to be strict, then create exceptions per device','Use one policy but configure per-device overrides for developer machines in the Endpoints view'],
+    correct:[0],
+    explanation:'CBC is designed for exactly this use case — you create separate policies with different settings and assign different endpoint groups to each. Create a "Servers" policy with Block & Report for Suspect Malware, and a "Developer Workstations" policy with Report only. Assign sensors to the appropriate policy group from the Endpoints page or via automated group rules. Multiple policies with different settings is the standard operational model.'
+  },
+  {
+    id:31, domain:'Alert Triage',
+    text:'An analyst is triaging alerts and sees 47 open alerts across the environment. They need to find only the CRITICAL severity CB Analytics alerts affecting servers. Which is the most efficient approach?',
+    type:'single',
+    options:['Open each alert one by one and check its severity and device type','Use the Alerts page filters — filter by Severity: Critical, Type: CB Analytics, then search/filter by device policy group for servers','Export all 47 alerts to CSV and filter in Excel','Create a watchlist that only shows server alerts'],
+    correct:[1],
+    explanation:'The Alerts page has robust built-in filtering — Severity, Alert Type, Device, Policy Group, Time Range, and more. Stacking filters (Critical severity + CB Analytics type + server policy group) narrows the list instantly without manually opening each alert. This is exactly the kind of operational efficiency the exam tests — knowing how to use the console tools rather than working around them.'
+  },
+  {
+    id:32, domain:'Live Response',
+    text:'During a Live Response session, an analyst wants to see what network connections the compromised endpoint currently has open — specifically any outbound connections to unusual IP addresses. Which command do they run?',
+    type:'single',
+    options:['ps','dir','netstat','get connections.log'],
+    correct:[2],
+    explanation:'netstat shows active network connections — local and remote addresses, port numbers, and connection state. This is the standard command for reviewing active network connections during an incident investigation in Live Response. ps shows running processes. dir lists files in a directory. "get connections.log" is not a valid Live Response command.'
+  },
+  {
+    id:33, domain:'Live Query',
+    text:'A compliance team needs to verify that all managed endpoints have the corporate VPN client installed. They need the result exported for the auditor. What is the complete correct workflow?',
+    type:'single',
+    options:['Investigate → Process Search for the VPN process name → export results','Audit & Remediation → New Query → SELECT * FROM programs WHERE name LIKE \'%vpn%\' → Run → Export to CSV','Endpoints → filter by policy → export to CSV — the installed software is listed per device','Alerts → filter by application type → export'],
+    correct:[1],
+    explanation:'The correct workflow is: Audit & Remediation → New Query → write a SQL query against the programs table filtering for the VPN client name → Run against all endpoints → Export to CSV. This gives fleet-wide installed software data in one query, formatted for export. Process Search in Investigate shows running processes, not installed software. The Endpoints view exports device info, not installed software lists. Alerts are for security events, not software inventory.'
+  },
+  {
+    id:34, domain:'CBC Workload',
+    text:'A VM is reverted to a snapshot that was taken 2 weeks ago, before the CBC sensor was installed. What is the state of CBC protection on that VM after the revert?',
+    type:'single',
+    options:['CBC protection is maintained — the sensor registration persists in the cloud regardless of the VM snapshot state','The sensor is gone — it was not present at snapshot time, so after revert the VM has no CBC sensor and appears as unmanaged','CBC automatically reinstalls the sensor on the VM after detecting the revert via vCenter','The VM is automatically quarantined by CBC after the revert is detected'],
+    correct:[1],
+    explanation:'Reverting a VM to a snapshot taken before the sensor was installed removes the sensor — the VM\'s disk is literally rolled back to a state where the sensor did not exist. After the revert, the VM has no CBC sensor and will appear as unmanaged in the Workloads view. The admin must redeploy the sensor. This is why best practice is to take snapshots AFTER sensor installation and initial registration, not before.'
+  },
+  {
+    id:35, domain:'Console Navigation',
+    text:'An administrator needs to create a new API key to allow a SOAR platform to integrate with CBC. Which role must the user have to create API keys, and where is this done?',
+    type:'single',
+    options:['Analyst role — Investigate → API Access','Administrator role — Settings → API Access → Add API Key','Read Only role — Settings → Integrations → New Key','Any role — API keys are self-service under the user\'s profile'],
+    correct:[1],
+    explanation:'Creating API keys requires Administrator role, and the task is performed at Settings → API Access → Add API Key. You define the key\'s access level (what operations it can perform), give it a name/description, and save. The key value is shown only once at creation — it cannot be retrieved again, so it must be copied immediately. Analyst and Read Only roles cannot create API keys.'
+  },
+  {
+    id:36, domain:'Sensor Deployment',
+    text:'An organization wants sensors deployed to all new Windows endpoints that join the domain to automatically receive the "Corporate Standard" policy without any manual intervention. What is the correct approach?',
+    type:'single',
+    options:['Configure an AD Group Policy Object (GPO) to run the CBC sensor installer on domain join, and use sensor group rules in CBC to automatically assign sensors matching the AD OU to the Corporate Standard policy group','Manually assign each new sensor to the Corporate Standard policy group after it enrolls','Set Corporate Standard as the global default policy in CBC Settings — all new sensors automatically get it','Create a scheduled task in CBC that checks for new sensors daily and assigns them to the correct group'],
+    correct:[0],
+    explanation:'The complete automated deployment approach combines two components: (1) a GPO that runs the CBC sensor installer on domain join, so new endpoints automatically get the sensor without manual intervention, and (2) sensor group assignment rules in CBC that map endpoints matching specific AD OU or naming criteria to the Corporate Standard policy group. Together, these ensure new endpoints are automatically protected with the correct policy from the moment they join the domain.'
+  },
+  {
+    id:37, domain:'Policy Configuration',
+    text:'An administrator notices that a newly created policy rule has been in Report mode for 30 days and has not generated a single report event. What does this most likely indicate?',
+    type:'single',
+    options:['The rule is broken and needs to be recreated','The rule conditions have never been met by any endpoint activity — the behavior it targets hasn\'t occurred in the environment','Report mode rules do not generate events — only Enforce mode generates events','The rule is not applied because the policy hasn\'t been assigned to any sensors'],
+    correct:[1],
+    explanation:'If a Report mode rule has generated zero events over 30 days, the most likely explanation is that the specific behavior or file path the rule targets simply hasn\'t occurred in the environment during that period. Report mode absolutely does generate events — that is its purpose. Before concluding the rule is broken, verify it is actually assigned to a policy with active sensors. If sensors are assigned and active but no events have fired, the targeted behavior hasn\'t occurred — which may itself be a useful data point.'
+  },
+  {
+    id:38, domain:'Alert Triage',
+    text:'A CB Analytics alert fires for an endpoint running a critical database server. The process tree shows cmd.exe spawned by sqlservr.exe. The analyst is not sure if this is legitimate or malicious. What is the most important contextual factor to investigate first?',
+    type:'single',
+    options:['The severity score of the alert — if it\'s Medium, it\'s probably a false positive','Whether cmd.exe is a known Windows binary — if so, it\'s automatically safe','What command line arguments cmd.exe was launched with — this determines whether the spawn was a legitimate administrative action or an indicator of SQL injection / attack activity','The time of day the alert fired — daytime alerts are usually legitimate'],
+    correct:[2],
+    explanation:'The command line arguments are the most critical contextual factor. sqlservr.exe spawning cmd.exe is suspicious on its own, but the cmd.exe command line arguments tell you exactly what it was trying to do. A legitimate DBA may have configured a maintenance task that runs cmd. An attacker exploiting SQL injection would also spawn cmd — but with different arguments (e.g., net user, whoami, powershell downloads). Alert severity, binary legitimacy, and time of day are all lower signal than the actual command being run.'
+  },
+  {
+    id:39, domain:'Live Response',
+    text:'An analyst uses Live Response to kill a malicious process on a compromised endpoint. After the session ends, the analyst checks the Alerts page and notices a new alert fired for the same endpoint 10 minutes later with the same process. What is the most likely explanation?',
+    type:'single',
+    options:['Live Response kills are temporary — CBC reverses process kills after the session ends','The malware has a persistence mechanism (e.g., a scheduled task, registry run key, or service) that relaunched the process after it was killed — killing the process alone is not sufficient remediation','The analyst killed the wrong process — cmd.exe is always named differently on infected systems','Live Response cannot kill processes associated with malware — only legitimate processes can be killed'],
+    correct:[1],
+    explanation:'Killing a process stops the current instance but does not remove the persistence mechanism that restarts it. Sophisticated malware typically installs persistence via scheduled tasks, registry Run/RunOnce keys, Windows services, or startup folder entries. The correct remediation sequence is: kill the process AND remove the persistence mechanism. This is why Live Response includes the ability to delete files, modify the registry, and disable services — full remediation requires addressing persistence, not just the running process.'
+  },
+  {
+    id:40, domain:'Live Query',
+    text:'A Live Query is run against 500 endpoints to check for a specific registry key. Results show the key present on 12 endpoints. The analyst wants to investigate one of those 12 endpoints in depth. What is the most direct next step from the query results?',
+    type:'single',
+    options:['Note the device name and navigate manually to Endpoints to find the device','Click the device name in the query results — CBC links directly to the device detail page from Live Query results','Export the results to CSV and then use the CSV to find the device in Endpoints','Run a second Live Query against only that one device'],
+    correct:[1],
+    explanation:'CBC Live Query results are interactive — device names in the results table link directly to the device detail page in CBC. From there, the analyst can immediately navigate to the Endpoints detail, open Live Response, view the device\'s alert history, or take any other action. The workflow is designed to be seamless from query result to investigation — no manual navigation or CSV export needed.'
+  },
+  {
+    id:41, domain:'Users & Roles',
+    text:'A CBC administrator needs to temporarily give a contractor Analyst-level access to investigate a specific incident. The contractor should lose access automatically after 2 weeks. What is the correct approach in CBC?',
+    type:'single',
+    options:['Add the contractor as an Analyst user and set an expiry date on the account during creation','Add the contractor as an Analyst user and manually remove their account after 2 weeks — CBC does not have automated account expiry','Give the contractor the admin\'s credentials temporarily, then change the password after 2 weeks','Create a Read Only account — contractors cannot have Analyst role'],
+    correct:[1],
+    explanation:'CBC does not have built-in automated account expiry. The correct operational approach is to add the contractor as an Analyst user and set a calendar reminder to manually remove the account after the 2-week period. Sharing credentials is a security anti-pattern and audit trail violation. Contractors can have any role the administrator assigns — there is no contractor-specific role restriction. This limitation (no auto-expiry) is worth knowing operationally.'
+  },
+  {
+    id:42, domain:'Console Navigation',
+    text:'An administrator wants to see all CBC events — not just alerts — including approved file executions, policy changes, and sensor check-ins, for a specific endpoint over the past 24 hours. Where do they go?',
+    type:'single',
+    options:['Alerts page filtered to that device','Investigate → Enriched Event Search, filtered by device name and time range','Endpoints → device detail → the Events tab shows raw event history','Audit & Remediation → run a query against the events table'],
+    correct:[1],
+    explanation:'Raw endpoint event data — all telemetry including non-alert events — is searchable in Investigate → Enriched Event Search (also called Event Search). This is distinct from the Alerts page, which only shows events that triggered an alert. Enriched Event Search lets you see the full picture: what ran, what was approved, what network connections were made, what files were written, all filterable by device and time range.'
+  },
+  {
+    id:43, domain:'Sensor Deployment',
+    text:'After deploying sensors to 300 new endpoints, an admin wants to confirm all sensors are actively checking in and enforcing their policy. What is the most efficient way to do this?',
+    type:'single',
+    options:['Open a Live Response session to each endpoint and run "ps" to confirm the sensor process is running','In Endpoints, filter by Status: Active and the specific policy group — verify the count matches the 300 deployed','Run a Live Query asking each endpoint to confirm sensor status','Check each endpoint\'s local Windows Event Log for CBC sensor service events'],
+    correct:[1],
+    explanation:'The Endpoints page with Status and Policy Group filters is the most efficient fleet-level health check. Filter to Active status + the target policy group — if all 300 show as Active, they are checking in and enforcing. If the count is less than 300, the missing ones are offline, degraded, or haven\'t enrolled yet. Live Response is one endpoint at a time. Live Query requires sensors to be functional to respond. Checking event logs per endpoint is extremely slow at scale.'
+  },
+  {
+    id:44, domain:'Policy Configuration',
+    text:'A policy currently has Known Malware set to "Block & Report" and Suspect Malware set to "Report." An analyst wants to also block Suspect Malware going forward. What is the correct procedure?',
+    type:'single',
+    options:['Create a new policy — existing policies cannot be modified','Navigate to Enforce → Policies → open the policy → Prevention tab → change Suspect Malware from Report to Block & Report → Save','Navigate to Enforce → Policies → clone the policy → modify the clone → reassign all sensors to the clone','Change the setting directly on each endpoint via Live Response'],
+    correct:[1],
+    explanation:'Existing policies can be modified in place — navigate to Enforce → Policies, open the policy, go to the Prevention tab, change the Suspect Malware handling to Block & Report, and save. The change is pushed to all sensors assigned to that policy on their next check-in. There is no need to clone or recreate the policy. Changes cannot be made per-endpoint via Live Response — policy is managed centrally from the console.'
+  },
+  {
+    id:45, domain:'Alert Triage',
+    text:'An analyst dismisses 15 alerts as false positives, all triggered by the same legitimate internal application. The next day, 20 more alerts fire for the same application. What is the most efficient permanent solution?',
+    type:'single',
+    options:['Continue dismissing alerts manually — this is the standard workflow','Create an exception rule in the policy that allows the specific application, so it no longer triggers alerts','Ban the application hash to prevent it from running and generating alerts','Downgrade the alert severity so it no longer requires triage'],
+    correct:[1],
+    explanation:'If the same application is repeatedly generating false positive alerts, the correct long-term fix is a targeted exception rule — allow the specific application by hash, path, or signing certificate in the policy. This stops the alerts at the source rather than requiring ongoing manual dismissal. Dismissing repeatedly is operationally wasteful. Banning would prevent a legitimate application from running. CBC does not have an alert severity downgrade option per-application.'
+  },
+  {
+    id:46, domain:'Live Response',
+    text:'An analyst opens a Live Response session and runs a command that they realize may have caused unintended changes on the endpoint. Where can they review exactly what commands were run and what actions were taken during the session for audit purposes?',
+    type:'single',
+    options:['The commands are not logged — Live Response is a real-time session with no audit trail','The Live Response session log — CBC records every command and action taken during the session, accessible from the device detail page or audit logs','The analyst must reconstruct actions from memory and document them manually','The endpoint\'s local Windows Event Log contains a complete CBC Live Response transcript'],
+    correct:[1],
+    explanation:'CBC logs every command and action taken during a Live Response session — what command was run, by which user, at what timestamp, and what the result was. This creates a tamper-resistant audit trail accessible from the CBC console. This is critical for forensic integrity and compliance — you can prove exactly what was done to a compromised endpoint during incident response. The audit log is in CBC, not on the local endpoint.'
+  },
+  {
+    id:47, domain:'Live Query',
+    text:'A Live Query scheduled to run daily has been accumulating results for 2 weeks. An auditor asks for the results from 10 days ago specifically. Where do they find historical scheduled query results?',
+    type:'single',
+    options:['Historical results are not retained — only the most recent run\'s results are available','Audit & Remediation → Results — scheduled query results are stored and accessible by run date, allowing review of historical runs','Investigate → Event Search — historical query results are treated as CBC events','The results must be re-run for the past date — CBC cannot query historical states'],
+    correct:[1],
+    explanation:'Scheduled Live Query results are stored in CBC and accessible by run date under Audit & Remediation → Results. You can select a specific scheduled query and browse its historical runs to see results from any prior execution. This is what makes scheduled queries valuable for compliance — not just the current run, but a historical record of every run. This is distinct from ad hoc queries, whose results are temporary.'
+  },
+  {
+    id:48, domain:'CBC Workload',
+    text:'A CBC administrator wants to understand the vulnerability exposure of the VM estate before a quarterly security review. They need a list of all Critical CVSS vulnerabilities across all managed VMs. What is the correct approach in CBC Workload?',
+    type:'single',
+    options:['Run a Live Query using the CVE table in osquery against all VMs','Navigate to the Workloads view → filter by Vulnerability Severity: Critical — CBC displays CVE data per VM from the vCenter inventory','Run an Investigate → Process Search for known vulnerable process names','Create a watchlist that alerts on CVEs — results will appear in the Alerts page'],
+    correct:[1],
+    explanation:'CBC Workload surfaces vulnerability data in the Workloads view. You can filter the VM inventory by vulnerability severity to find all VMs with Critical CVEs. The data is pulled from the sensor\'s software inventory matched against vulnerability databases — no separate scan is needed. Live Query does not have a dedicated CVE table in standard osquery. Process Search is for security event hunting, not vulnerability inventory. Watchlists detect security events, not vulnerability states.'
+  },
+  {
+    id:49, domain:'Console Navigation',
+    text:'An administrator needs to view which sensors are running an outdated sensor version and need to be updated. Where in the console is this information most efficiently found?',
+    type:'single',
+    options:['Downloads — the current version is listed and can be compared to what\'s deployed','Endpoints — filter or sort by Sensor Version column to identify outdated sensors, then compare against the latest available in Downloads','Settings → Sensor Management → Version Report','Investigate → run a process search for the sensor version string'],
+    correct:[1],
+    explanation:'The Endpoints page has a Sensor Version column that shows the version running on each sensor. You can sort by this column to group sensors by version, making it easy to identify which ones are behind. Cross-reference with the latest available version shown in Downloads. The Endpoints page is the operational hub for sensor fleet management — version visibility is one of its core functions.'
+  },
+  {
+    id:50, domain:'Policy Configuration',
+    text:'A new policy rule is configured to block a specific script execution pattern. After switching it to Enforce mode, the help desk immediately receives 50 calls from users saying a business-critical application stopped working. What is the fastest corrective action?',
+    type:'single',
+    options:['Delete the rule entirely and start over','Switch the rule back to Report mode immediately — this stops the blocking without removing the rule, giving time to investigate and tune before re-enforcing','Deregister all affected sensors and re-enroll them with a different policy','Change the policy enforcement level to Disabled until the rule is tuned'],
+    correct:[1],
+    explanation:'Switching the rule back to Report mode is the fastest and most controlled corrective action — it immediately stops the blocking behavior, restores the affected application\'s functionality, and preserves the rule configuration for investigation and tuning. The rule\'s match data (now in Report mode) will continue to show exactly what it\'s hitting, helping the admin tune the conditions to exclude the legitimate application. Deleting the rule loses all configuration. Deregistering sensors is drastic and slow. Setting the policy to Disabled removes all protection.'
+  }
+];
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + tab).classList.add('active');
+  el.classList.add('active');
+}
+
+function buildStudyGuide() {
+  const nav = document.getElementById('domainNav');
+  const cards = document.getElementById('domainCards');
+  DOMAINS.forEach((d, i) => {
+    const chip = document.createElement('button');
+    chip.className = 'domain-chip' + (i === 0 ? ' active' : '');
+    chip.textContent = d.title;
+    chip.onclick = () => selectDomain(d.id);
+    nav.appendChild(chip);
+    const card = document.createElement('div');
+    card.className = 'domain-card' + (i === 0 ? ' active' : '');
+    card.id = 'domain-' + d.id;
+    card.innerHTML = d.html;
+    cards.appendChild(card);
+  });
+}
+
+function selectDomain(id) {
+  document.querySelectorAll('.domain-chip').forEach((c,i) => c.classList.toggle('active', DOMAINS[i].id === id));
+  document.querySelectorAll('.domain-card').forEach(c => c.classList.toggle('active', c.id === 'domain-' + id));
+}
+
+let currentQ = 0, answers = {}, submitted = {}, score = 0;
+
+function renderQuestion(idx) {
+  const q = QUESTIONS[idx];
+  const area = document.getElementById('quizArea');
+  const done = Object.keys(submitted).length;
+  document.getElementById('progressFill').style.width = (done / QUESTIONS.length * 100) + '%';
+  document.getElementById('progressText').textContent = done + ' / ' + QUESTIONS.length;
+  const isSubmitted = !!submitted[q.id];
+  const ua = answers[q.id] || [];
+  const opts = q.options.map((o,oi) => {
+    let cls = 'option-btn';
+    if (isSubmitted) { if (q.correct.includes(oi)) cls += ' correct'; else if (ua.includes(oi)) cls += ' incorrect'; }
+    else if (ua.includes(oi)) cls += ' selected';
+    return `<button class="${cls}" onclick="selectOption(${q.id},${oi},'${q.type}')" ${isSubmitted?'disabled':''}><span class="option-letter">${String.fromCharCode(65+oi)}</span><span>${o}</span></button>`;
+  }).join('');
+  area.innerHTML = `<div class="quiz-card">
+    <div class="q-number">Question ${idx+1} of ${QUESTIONS.length}</div>
+    <div class="q-tag">${q.domain}</div>
+    ${q.scenario ? `<div class="q-scenario">${q.scenario}</div>` : ''}
+    <div class="q-text">${q.text}</div>
+    <div class="options">${opts}</div>
+    ${!isSubmitted ? `<button class="submit-btn" id="submitBtn" onclick="submitAnswer(${q.id})" ${ua.length===0?'disabled':''}>Check answer</button>` : ''}
+    <div class="explanation ${isSubmitted?'show':''}">${q.explanation}</div>
+  </div>
+  <div class="quiz-nav">
+    <button class="nav-btn" onclick="goQ(${idx-1})" ${idx===0?'disabled':''}>← Previous</button>
+    ${idx < QUESTIONS.length-1 ? `<button class="nav-btn primary" onclick="goQ(${idx+1})">Next →</button>` : `<button class="nav-btn primary" onclick="showScore()">See results</button>`}
+  </div>`;
+}
+
+function selectOption(qid,oi,type) {
+  if (!answers[qid]) answers[qid]=[];
+  if (type==='single') answers[qid]=[oi];
+  else { const i=answers[qid].indexOf(oi); if(i>-1) answers[qid].splice(i,1); else answers[qid].push(oi); }
+  const btn=document.getElementById('submitBtn');
+  if(btn) btn.disabled=answers[qid].length===0;
+  renderQuestion(currentQ);
+}
+
+function submitAnswer(qid) {
+  const q=QUESTIONS.find(q=>q.id===qid);
+  const ua=answers[qid]||[];
+  const ok=JSON.stringify(ua.slice().sort())===JSON.stringify(q.correct.slice().sort());
+  submitted[qid]={correct:ok};
+  if(ok) score++;
+  renderQuestion(currentQ);
+}
+
+function goQ(idx) { currentQ=idx; renderQuestion(idx); }
+
+function showScore() {
+  document.getElementById('quizArea').style.display='none';
+  const sc=document.getElementById('scoreCard'); sc.classList.add('show');
+  const pct=Math.round(score/QUESTIONS.length*100);
+  document.getElementById('scoreBig').textContent=score+'/'+QUESTIONS.length;
+  const pass=document.getElementById('scorePass');
+  pass.textContent = pct>=80 ? '✓ Exam ready' : pct>=65 ? '~ Getting there — review weak domains' : '✗ Keep drilling';
+  pass.style.color = pct>=80 ? 'var(--success)' : pct>=65 ? 'var(--amber)' : 'var(--danger)';
+  document.getElementById('scoreGrid').innerHTML=`
+    <div class="fact-card"><div class="label">Score</div><div class="value">${pct}%</div></div>
+    <div class="fact-card"><div class="label">Correct</div><div class="value">${score}</div></div>
+    <div class="fact-card"><div class="label">Missed</div><div class="value">${QUESTIONS.length-score}</div></div>`;
+  const ds={};
+  QUESTIONS.forEach(q=>{ if(!ds[q.domain]) ds[q.domain]={c:0,t:0}; ds[q.domain].t++; if(submitted[q.id]?.correct) ds[q.domain].c++; });
+  let html='<h3 style="font-size:14px;font-weight:500;margin-bottom:12px;">By domain</h3>';
+  Object.entries(ds).sort((a,b)=>(a[1].c/a[1].t)-(b[1].c/b[1].t)).forEach(([d,s])=>{
+    const p=Math.round(s.c/s.t*100);
+    const col=p===100?'var(--success)':p>=50?'var(--amber)':'var(--danger)';
+    html+=`<div class="domain-row"><span style="flex:1;font-size:13px;">${d}</span><div class="domain-bar-wrap"><div class="domain-bar" style="width:${p}%;background:${col};"></div></div><span style="font-size:13px;font-family:var(--mono);font-weight:500;color:${col};min-width:32px;text-align:right;">${s.c}/${s.t}</span></div>`;
+  });
+  document.getElementById('domainBreakdown').innerHTML=html;
+}
+
+function resetQuiz() {
+  currentQ=0; answers={}; submitted={}; score=0;
+  document.getElementById('quizArea').style.display='';
+  document.getElementById('scoreCard').classList.remove('show');
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('progressText').textContent='0 / '+QUESTIONS.length;
+  renderQuestion(0);
+}
+
+const QUICK_QS = [
+  'Walk me through connecting vCenter to CBC step by step',
+  'What does Unmanaged mean in the CBC Workload view?',
+  'How do I deploy sensors to VMs at scale using templates?',
+  'What happens to CBC enforcement when a VM is vMotioned?',
+  'Walk me through adding a new user step by step',
+  'Where do I download a sensor installer and what do I need from the console?',
+  'What are the exact steps to triage an alert from start to finish?',
+  'How do I open a Live Response session and what commands can I run?',
+  'What\'s the difference between running and scheduling a Live Query?',
+  'Quiz me on console navigation — where does everything live?',
+  'What can each role do? Administrator vs Analyst vs Read Only',
+  'Walk me through creating a new policy from scratch'
+];
+
+function buildTutor() {
+  const qqs=document.getElementById('quickQuestions');
+  QUICK_QS.forEach(q=>{
+    const btn=document.createElement('button');
+    btn.className='quick-q'; btn.textContent=q;
+    btn.onclick=()=>{ document.getElementById('chatInput').value=q; sendChat(); };
+    qqs.appendChild(btn);
+  });
+}
+
+let chatHistory=[];
+
+async function sendChat() {
+  const input=document.getElementById('chatInput');
+  const sendBtn=document.getElementById('chatSend');
+  const msgs=document.getElementById('chatMessages');
+  const text=input.value.trim(); if(!text) return;
+  input.value=''; sendBtn.disabled=true;
+  const um=document.createElement('div'); um.className='msg user'; um.textContent=text;
+  msgs.appendChild(um); msgs.scrollTop=msgs.scrollHeight;
+  chatHistory.push({role:'user',content:text});
+  const th=document.createElement('div'); th.className='msg thinking'; th.textContent='Thinking...';
+  msgs.appendChild(th); msgs.scrollTop=msgs.scrollHeight;
+  try {
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:1000,
+        system:`You are an expert CBC (Carbon Black Cloud) admin operations tutor helping Ron Villagomez pass the 250-602 exam. The exam is admin/operations focused. You know exact console navigation paths and step-by-step procedures for all admin tasks. Key knowledge: CONSOLE NAVIGATION: Endpoints=sensor management/quarantine/Live Response; Alerts=alert triage; Investigate=process search/watchlists (EEDR); Enforce=policies and rules; Audit & Remediation=Live Query/osquery; Settings=users/roles/API keys/notifications; Downloads=sensor installers. USERS/ROLES: Settings→Users→Add User. Roles: Administrator (full access), Analyst (investigate+respond, no policy/user mgmt), Read Only (view+export only, no actions). SENSOR DEPLOYMENT: Downloads→select OS→download installer. Company Code required during install to register to org. Sensors visible in Endpoints after registration. Policy group change = takes effect on next check-in, no restart needed. Sensor statuses: green=active, yellow=degraded, red=error, grey=inactive/offline. POLICIES: Enforce→Policies. Tabs: Prevention (reputation actions per category: Block&Report/Report/Allow/Terminate), Local Scan (on-access signatures), Sensor (telemetry capabilities), Rules (behavioral rules with Report/Enforce toggle). Default policy = Standard. Always set new rules to Report mode before Enforce. ALERT TRIAGE: Alerts page. Always investigate first (read alert, examine process tree, check device context) before acting. Actions from alert: Quarantine (isolates endpoint, keeps CBC channel open), Ban Hash (blocks hash fleet-wide, does NOT delete files), Live Response (interactive shell, works on quarantined endpoints), Dismiss (workflow action only, does not affect endpoint). Alert types: CB Analytics (behavioral), Watchlist (EEDR), Device Control (USB), IDS. LIVE RESPONSE: Endpoints→device→Live Response OR from alert. Requires sensor online. Commands: get [file]=pull file to analyst workstation, put=upload file, ps=processes, kill [PID], dir/ls, rm, netstat. Session is logged/audited. Works on quarantined endpoints. Requires Analyst+ role. LIVE QUERY: Audit & Remediation→New Query. osquery SQL-based. Tables: processes (current running), programs (installed software), users, listening_ports, services, registry, usb_devices. Run=ad hoc one-time. Schedule=recurring interval. Results=point-in-time snapshot, NOT historical. Export to CSV. For historical data use EEDR process search in Investigate. CBC WORKLOAD: Settings→Integrations→VMware vCenter to connect. Requires vCenter FQDN + read-only service account credentials. After connecting, ALL VMs appear in Workloads view (managed=sensor installed, unmanaged=no sensor). Deploy sensor from console requires VMware Tools inside guest OS. Template deployment: install sensor in golden image → run vdi-cleaner prep script → convert to template → each clone registers as new unique agent on first boot. vMotion is transparent to sensor — sensor keeps running, policy unchanged. Quarantine on VM isolates guest OS network only — ESXi host and other VMs unaffected. Vulnerabilities tab: shows CVE data per VM (CVE ID, CVSS score, affected app/version) — CBC identifies only, does NOT patch. Snapshot revert can cause sensor identity issues — take snapshots AFTER sensor install and registration. Workloads view organized by Datacenter→Cluster→Host→VM (vs Endpoints which is flat list). Powered-off VMs visible in Workloads view but sensor not active. Be concise and step-by-step. When asked to quiz, use scenario-based questions about where to go or what steps to take.`,
+        messages:chatHistory
+      })
+    });
+    const data=await resp.json();
+    const reply=data.content?.find(b=>b.type==='text')?.text||'Sorry, no response.';
+    chatHistory.push({role:'assistant',content:reply});
+    th.remove();
+    const am=document.createElement('div'); am.className='msg assistant'; am.textContent=reply;
+    msgs.appendChild(am); msgs.scrollTop=msgs.scrollHeight;
+  } catch(e) { th.textContent='Error — check connection.'; }
+  sendBtn.disabled=false; input.focus();
+}
+
+buildStudyGuide();
+buildTutor();
+renderQuestion(0);
+</script>
+</body>
+</html>
